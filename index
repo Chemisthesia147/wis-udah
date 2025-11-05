@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WISUDA YEAYYY</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .back-btn, .search-btn {
+            width: 40px;
+            height: 40px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .album-cover {
+            width: 280px;
+            height: 280px;
+            margin: 24px auto;
+            background: #333;
+            overflow: hidden;
+        }
+
+        .album-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .album-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            margin: 20px 0 8px;
+        }
+
+        .album-info {
+            text-align: center;
+            color: #b3b3b3;
+            font-size: 13px;
+            padding: 0 16px;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 24px 40px;
+            margin-top: 16px;
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            color: #b3b3b3;
+            font-size: 28px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .control-btn:active {
+            color: #fff;
+        }
+
+        .play-btn {
+            width: 64px;
+            height: 64px;
+            background: #fff;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 28px;
+        }
+
+        .song-list {
+            padding: 0 16px 120px 16px;
+        }
+
+        .song-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-radius: 4px;
+        }
+
+        .song-item:active {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .song-cover {
+            width: 48px;
+            height: 48px;
+            background: #333;
+            border-radius: 4px;
+            margin-right: 12px;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .song-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .song-info {
+            flex: 1;
+        }
+
+        .song-name {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .song-artist {
+            font-size: 13px;
+            color: #b3b3b3;
+        }
+
+        .song-menu {
+            color: #b3b3b3;
+            font-size: 20px;
+            padding: 8px;
+        }
+
+        .bottom-player {
+            position: fixed;
+            bottom: 60px;
+            left: 0;
+            right: 0;
+            background: #282828;
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            justify-content: space-between;
+        }
+
+        .bottom-player-left {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .bottom-cover {
+            width: 48px;
+            height: 48px;
+            background: #333;
+            border-radius: 4px;
+            margin-right: 12px;
+            overflow: hidden;
+        }
+
+        .bottom-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .bottom-info .song-name {
+            font-size: 13px;
+        }
+
+        .bottom-info .song-artist {
+            font-size: 11px;
+        }
+
+        .bottom-controls {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .bottom-controls button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #000;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 12px;
+            border-top: 1px solid #282828;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #b3b3b3;
+            font-size: 20px;
+            text-decoration: none;
+        }
+
+        .nav-item span {
+            font-size: 10px;
+            margin-top: 4px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            padding: 60px 24px 24px;
+            text-align: center;
+        }
+
+        .modal-photo {
+            width: 200px;
+            height: 200px;
+            background: #333;
+            border-radius: 50%;
+            margin: 0 auto 24px;
+            overflow: hidden;
+        }
+
+        .modal-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-name {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .modal-degree {
+            font-size: 16px;
+            color: #b3b3b3;
+            margin-bottom: 32px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 32px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn">←</button>
+        <button class="search-btn">🔍︎</button>
+    </div>
+
+    <div class="album-cover">
+        <img src="berempat.jpg" alt="Cover Album">
+    </div>
+
+    <h1 class="album-title">Akhirnya Wisuda</h1>
+    <p class="album-info">Wisuda • 4 Bestie • Sejak 2016</p>
+
+    <div class="controls">
+        <button class="control-btn">↓</button>
+        <button class="control-btn">✎</button>
+        <button class="play-btn">▶</button>
+        <button class="control-btn">⤨</button>
+        <button class="control-btn">⋮</button>
+    </div>
+
+    <div class="song-list">
+        <div class="song-item" onclick="openModal('Alya Azzahra Edra Dewina S.P.', 'Sarjana Pertanian', 'Foto Alya.jpg')">
+            <div class="song-cover">
+                <img src="Foto Alya.jpg" alt="Foto Alya">
+            </div>
+            <div class="song-info">
+                <div class="song-name">Alya Azzahra Edra Dewina</div>
+                <div class="song-artist">UB</div>
+            </div>
+            <div class="song-menu">⋮</div>
+        </div>
+
+        <div class="song-item" onclick="openModal('Jasmin Amelia Khamza S.Tr.Keb', 'Sarjana Terapan Kebidanan', 'Foto Sasha.jpg')">
+            <div class="song-cover">
+                <img src="Foto Sasha.jpg" alt="Foto Sasha">
+            </div>
+            <div class="song-info">
+                <div class="song-name">Jasmin Amelia Khamza</div>
+                <div class="song-artist">POLKESYO</div>
+            </div>
+            <div class="song-menu">⋮</div>
+        </div>
+
+        <div class="song-item" onclick="openModal('Khurin Nur Azimah S.Sos.', 'Sarjana Sosial', 'Foto Khurin.jpg')">
+            <div class="song-cover">
+                <img src="Foto Khurin.jpg" alt="Foto Khurin">
+            </div>
+            <div class="song-info">
+                <div class="song-name">Khurin Nur Azimah</div>
+                <div class="song-artist">UIN SATU</div>
+            </div>
+            <div class="song-menu">⋮</div>
+        </div>
+
+        <div class="song-item" onclick="openModal('Tsary Aqilah Arinanta S.Pd.', 'Sarjana Pendidikan', 'Foto Tsary.jpg')">
+            <div class="song-cover">
+                <img src="Foto Tsary.jpg" alt="Foto Tsary">
+            </div>
+            <div class="song-info">
+                <div class="song-name">Tsary Aqilah Arinanta</div>
+                <div class="song-artist">UM</div>
+            </div>
+            <div class="song-menu">⋮</div>
+        </div>
+    </div>
+
+    <div class="bottom-player">
+        <div class="bottom-player-left">
+            <div class="bottom-cover">
+                <img src="alam kandung arek arek.jpg" alt="Cover Album Sukses Selalu">
+            </div>
+            <div class="bottom-info">
+                <div class="song-name">Sukses</div>
+                <div class="song-artist">Selalu</div>
+            </div>
+        </div>
+        <div class="bottom-controls">
+            <button>⏸</button>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="#" class="nav-item">
+            ⌂
+            <span>Beranda</span>
+        </a>
+        <a href="#" class="nav-item">
+            ▶
+            <span>Video</span>
+        </a>
+        <a href="#" class="nav-item">
+            🔍︎
+            <span>Cari</span>
+        </a>
+        <a href="#" class="nav-item">
+            ⊞
+            <span>Koleksi</span>
+        </a>
+        <a href="#" class="nav-item">
+            ★
+            <span>Premium</span>
+        </a>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <button class="close-modal" onclick="closeModal()">×</button>
+        <div class="modal-content">
+            <div class="modal-photo">
+                <img id="modalPhoto" src="photo1.jpg" alt="Graduate">
+            </div>
+            <h2 class="modal-name" id="modalName">Nama Lulusan</h2>
+            <p class="modal-degree" id="modalDegree">Sarjana Teknik Informatika</p>
+        </div>
+    </div>
+
+    <script>
+        function openModal(name, degree, photo) {
+            document.getElementById('modalName').textContent = name;
+            document.getElementById('modalDegree').textContent = degree;
+            document.getElementById('modalPhoto').src = photo;
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+    </script>
+</body>
+</html>
